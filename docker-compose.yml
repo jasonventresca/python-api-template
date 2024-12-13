@@ -20,11 +20,11 @@ services:
       - "traefik.enable=false"
     restart: always
 
-  x-api-base: &api-base
-    image: fastapi-app:latest
+  x-api-1-base: &api-1-base
+    image: fastapi-app-1:latest
     build:
       context: .
-    container_name: fastapi-app
+    container_name: fastapi-app-1
     ports:
       - "8000:8000"
     depends_on:
@@ -33,24 +33,24 @@ services:
     restart: always
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.fastapi-app.rule=Host(`api.localhost`)"
-      - "traefik.http.routers.fastapi-app.entrypoints=web"
-      - "traefik.http.services.fastapi-app.loadbalancer.server.port=8000"
+      - "traefik.http.routers.fastapi-app-1.rule=Host(`api.localhost`)"
+      - "traefik.http.routers.fastapi-app-1.entrypoints=web"
+      - "traefik.http.services.fastapi-app-1.loadbalancer.server.port=8000"
 
-  api-prod:
-    <<: *api-base
+  api-1-prod:
+    <<: *api-1-base
     environment:
       - MODE=production # Production mode uses the image's copied files
 
-  api-dev:
-    <<: *api-base
+  api-1-dev:
+    <<: *api-1-base
     environment:
       - MODE=development
     volumes:
       # Mount the local source code directory
       # Override the production files with local files for development
       - .:/app
-
+  
   db:
     image: postgres:17-bookworm
     container_name: postgres

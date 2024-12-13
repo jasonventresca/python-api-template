@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI, Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
@@ -19,6 +21,10 @@ http_client = httpx.AsyncClient()
 
 # Authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+ENV_MODE = os.getenv("MODE")
+if ENV_MODE == "development":
+    print(f"Running in development mode")
 
 @app.get("/example")
 async def example_route(
