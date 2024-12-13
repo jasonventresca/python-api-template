@@ -1,37 +1,27 @@
 version: '3.8'
 
 services:
-  api:
+  x-api-base: &api-base
     image: fastapi-app:latest
     build:
       context: .
     container_name: fastapi-app
     ports:
       - "8000:8000"
-    environment:
-      - MODE=production # Production mode uses the image's copied files
-      - DATABASE_URL=postgresql+asyncpg://user:password@db:5432/dbname
-      - REDIS_HOST=redis
     depends_on:
       - db
       - redis
     restart: always
 
+  api-prod:
+    <<: *api-base
+    environment:
+      - MODE=production # Production mode uses the image's copied files
+
   api-dev:
-    image: fastapi-app:latest
-    build:
-      context: .
-    container_name: fastapi-app
-    ports:
-      - "8000:8000"
+    <<: *api-base
     environment:
       - MODE=development
-      - DATABASE_URL=postgresql+asyncpg://user:password@db:5432/dbname
-      - REDIS_HOST=redis
-    depends_on:
-      - db
-      - redis
-    restart: always
     volumes:
       # Mount the local source code directory
       # Override the production files with local files for development

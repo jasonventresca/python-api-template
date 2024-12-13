@@ -14,10 +14,10 @@ The `docker compose up` command above actually builds the images and runs all of
 
 In development mode (`api-dev`), any changes to your Python files will automatically reload the application.
 
-For production mode (`api`), you'll need to rebuild the image to reflect code changes:
+For production mode (`api-prod`), you'll need to rebuild the image to reflect code changes:
 ```bash
-docker compose build api
-docker compose up api -d
+docker compose build api-prod
+docker compose up api-prod -d
 ```
 
 However, if you want to build individual images and run the containers manually, you can do 
