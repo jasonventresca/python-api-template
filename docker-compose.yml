@@ -1,6 +1,25 @@
 version: '3.8'
 
 services:
+  # based on https://blog.sethcorker.com/traefik-routing-for-web-apps/
+  reverse-proxy:
+    image: traefik:v3.2.2
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+#     - "--log.level=DEBUG"
+    container_name: traefik
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - "traefik.enable=false"
+    restart: always
+
   x-api-base: &api-base
     image: fastapi-app:latest
     build:
@@ -12,6 +31,11 @@ services:
       - db
       - redis
     restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fastapi-app.rule=Host(`api.localhost`)"
+      - "traefik.http.routers.fastapi-app.entrypoints=web"
+      - "traefik.http.services.fastapi-app.loadbalancer.server.port=8000"
 
   api-prod:
     <<: *api-base
