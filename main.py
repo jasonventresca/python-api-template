@@ -26,6 +26,9 @@ ENV_MODE = os.getenv("MODE")
 if ENV_MODE == "development":
     print(f"Running in development mode")
 
+ENV_APP_NAME = os.getenv("APP_NAME")
+print(f"ENV_APP_NAME: {ENV_APP_NAME}")
+
 @app.get("/example")
 async def example_route(
     token: str = Depends(oauth2_scheme),
